@@ -62,3 +62,13 @@ EXPOSE 8080
 CMD ["/mnt/tomcat/bin/catalina.sh" , "run"]
 
 ##https://github.com/Pritam-Khergade/student-ui/tree/master
+
+## multistage 
+FROM maven:3.9-sapmachine-11 as builder
+COPY . /
+RUN mvn clean package
+
+FROM tomcat:jre8-alpine
+COPY --from=builder /target/*.war webapps/student.war
+
+
