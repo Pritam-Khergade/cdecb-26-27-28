@@ -69,6 +69,48 @@ COPY . /
 RUN mvn clean package
 
 FROM tomcat:jre8-alpine
-COPY --from=builder /target/*.war webapps/student.war
+COPY --from=builder /target/*.war webapps/student.war\
 
 
+## Kubernetes cluster creation 
+admin ec2 role
+kubectl 
+awscli
+eksctl
+#https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html
+##install kubectl 
+#refer https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.0/2024-05-12/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+kubectl version --client
+#install eksctl https://eksctl.io/installation
+
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+# (Optional) Verify checksum
+curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+
+sudo mv /tmp/eksctl /usr/local/bin
+
+# eksctl 
+eksctl create cluster --name bramhos --node-type=t2.medium --nodes=2 --region=us-east-1
+#eksctl create cluster --name my-cluster --region region-code --version 1.29 --vpc-private-subnets subnet-ExampleID1,subnet-ExampleID2 --without-nodegroup
+
+## kubectl 
+
+kubectl get nodes
+kubectl get nodes -o wide
+
+##pod 
+kubectl get pods 
+kubectl describe po nginx 
+## create pods
+kubect apply -f pod.yaml
