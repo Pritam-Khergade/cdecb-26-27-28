@@ -114,3 +114,22 @@ kubectl get pods
 kubectl describe po nginx 
 ## create pods
 kubect apply -f pod.yaml
+
+
+
+## container type
+ sidecar container -> 
+ init container -> 
+
+
+## 
+ pod -> 
+ rs-> 
+    prefix -> rs\
+deploy -> 
+    rs-> prefix-> 
+        pod -> 
+## services
+ClusterIP  -> default -> internal 
+NodePort -> expose -> service -> internet
+LoadBalancer -> only available on cloud 
