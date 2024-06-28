@@ -116,7 +116,6 @@ kubectl describe po nginx
 kubect apply -f pod.yaml
 
 
-
 ## container type
  sidecar container -> 
  init container -> 
@@ -133,3 +132,9 @@ deploy ->
 ClusterIP  -> default -> internal 
 NodePort -> expose -> service -> internet
 LoadBalancer -> only available on cloud 
+
+## 
+kubectl create configmap nginxconf --from-file=index.html --dry-run=client -o yaml > cm.yaml
+  kubectl create secret generic nginx-secret --from-file=index.html --dry-run=client -o yaml > secret.yaml
+
+  kubectl port-forward pod/dapi-test-pod :80
