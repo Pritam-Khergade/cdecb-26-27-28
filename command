@@ -140,3 +140,18 @@ kubectl create configmap nginxconf --from-file=index.html --dry-run=client -o ya
   kubectl port-forward pod/dapi-test-pod :80
 
   echo "aGVsbG8gCg==" | base64 --decode
+
+#ns
+  kubectl create ns dev
+  kubectl run nginx --image=nginx -n dev
+    kubectl get po -n dev
+kubectl get po -A 
+
+
+resources: {}
+    limits: 
+        cpu:
+        memory:
+    requests:
+        cpu:
+        memory:

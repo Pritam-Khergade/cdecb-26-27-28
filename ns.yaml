@@ -3,5 +3,4 @@ kind: Namespace
 metadata:
   creationTimestamp: null
   name: dev
-spec: {}
-status: {}
+
