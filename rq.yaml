@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  creationTimestamp: null
+  name: rahulquota
+  namespace: rahul
+spec:
+  hard:
+    cpu: "1"
+    memory: "2"
+    pods: "3"
+status: {}

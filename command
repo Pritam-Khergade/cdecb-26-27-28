@@ -138,3 +138,5 @@ kubectl create configmap nginxconf --from-file=index.html --dry-run=client -o ya
   kubectl create secret generic nginx-secret --from-file=index.html --dry-run=client -o yaml > secret.yaml
 
   kubectl port-forward pod/dapi-test-pod :80
+
+  echo "aGVsbG8gCg==" | base64 --decode
