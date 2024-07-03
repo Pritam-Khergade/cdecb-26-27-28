@@ -155,3 +155,44 @@ resources: {}
     requests:
         cpu:
         memory:
+
+## volumes
+ host PATH
+ CSI drivers  -> dynamic volumes
+
+#pv
+
+pv 
+  pvc
+  volume pod 
+ 
+dynamic volumes
+    pvc 
+    volume pod 
+  
+
+##
+ 
+1. eksctl create iamserviceaccount \
+    --name ebs-csi-controller-sa \
+    --namespace kube-system \
+    --cluster thor \
+    --role-name AmazonEKS_EBS_CSI_DriverRole \
+    --role-only \
+    --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+    --approve --region=us-east-2
+
+# https://docs.aws.amazon.com/eks/latest/userguide/csi-iam-role.html
+
+2. cluster_name=thor
+3. oidc_id=$(aws eks describe-cluster --name $cluster_name  --region=us-east-2 --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+4. echo $oidc_id
+5. aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4
+6. eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve --region=us-east-2
+7. again 1st step
+
+
+8. eksctl create addon --name aws-ebs-csi-driver --cluster thor --service-account-role-arn arn:aws:iam::533266958719:role/AmazonEKS_EBS_CSI_DriverRole --force
+
+9. eksctl get addon --name aws-ebs-csi-driver --cluster thor --region=us-east-2
+10. kubectl apply -f volume
