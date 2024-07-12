@@ -196,3 +196,132 @@ dynamic volumes
 
 9. eksctl get addon --name aws-ebs-csi-driver --cluster thor --region=us-east-2
 10. kubectl apply -f volume
+
+
+##
+docker file task
+1. create Dockerfile
+2. base image nginx, free css template 
+## 
+FROM nginx 
+COPY freecsstemplate /usr/shared/nginx/html/.
+
+frontend
+
+ingress controller
+https://docs.aws.amazon.com/eks/latest/userguide/lbc-manifest.html
+
+cluster_name=demo
+oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
+echo $oidc_id
+aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4
+eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.7.2/docs/install/iam_policy.json
+
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+
+
+    eksctl create iamserviceaccount \
+    --cluster=$cluster_name \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --role-name AmazonEKSLoadBalancerControllerRole \
+    --attach-policy-arn=arn:aws:iam::975049998799:policy/AWSLoadBalancerControllerIAMPolicy \
+    --approve
+
+    # kubectl apply \
+    # --validate=false \
+    # -f https://github.com/jetstack/cert-manager/releases/download/v1.13.5/cert-manager.yaml
+
+    # curl -Lo v2_7_2_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.7.2/v2_7_2_full.yaml
+
+    # sed -i.bak -e '612,620d' ./v2_7_2_full.yaml
+
+    # kubectl apply -f v2_7_2_full.yaml
+
+    # curl -Lo v2_7_2_ingclass.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.7.2/v2_7_2_ingclass.yaml
+
+    # kubectl apply -f v2_7_2_ingclass.yaml
+
+
+    install helm 
+
+    https://helm.sh/docs/intro/install/helm repo add eks https://aws.github.io/eks-charts
+
+    helm repo add eks https://aws.github.io/eks-charts
+    helm repo update eks
+
+    helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=$cluster_name \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller 
+
+
+  https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.7.2/docs/examples/2048/2048_full.yaml
+
+
+kubectl create ingress simple --rule="foo.com/bar=svc1:80" --dry-run=client -o yaml > ing.yaml
+
+---
+  # 2145  kubectl apply -f .
+  # 2146  kubectl expose deploy nginx --port=80 
+  # 2147  kubectl get svc
+  # 2148  cluster_name=demo
+  # 2149  oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)\n
+  # 2150  echo $oidc_id\n
+  # 2151  eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve\n
+  # 2152  aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4\n
+  # 2153  curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.7.2/docs/install/iam_policy.json\n
+  # 2154  ls
+  # 2155  aws iam create-policy \\n    --policy-name AWSLoadBalancerControllerIAMPolicy \\n    --policy-document file://iam_policy.json
+  # 2156  curl -Lo v2_7_2_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.7.2/v2_7_2_full.yaml\n
+  # 2157  sed -i.bak -e '612,620d' ./v2_7_2_full.yaml\n
+  # 2158  kubectl apply -f v2_7_2_full.yaml\n
+  # 2159  kubectl apply \\n    --validate=false \\n    -f https://github.com/jetstack/cert-manager/releases/download/v1.13.5/cert-manager.yaml\n
+  # 2160  kubectl apply -f v2_7_2_full.yaml\n
+  # 2161  kubectl get all
+  # 2162  kubectl get all -A
+  # 2163  kubectl get deployment -n kube-system aws-load-balancer-controller\n
+  # 2164  kubectl describe deploy -n kube-system aws-load-balancer-controller
+  # 2165  brew install helm 
+  # 2166  helm 
+  # 2167  helm repo add eks https://aws.github.io/eks-charts\n
+  # 2168  helm repo update eks\n
+  # 2169  kubectl delete -f v2_7_2_full.yaml
+  # 2170  kubectl get all -A
+  # 2171  kubectl get deployment -n kube-system aws-load-balancer-controller\n
+  # 2172  kubectl get svc -A
+  # 2173  kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.7.2/docs/examples/2048/2048_full.yaml\n
+  # 2174  kubectl get all 
+  # 2175  kubectl get all -n game-2048
+  # 2176  curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.7.2/docs/examples/2048/2048_full.yaml\n
+  # 2177  kubectl api-resources 
+  # 2178  kubectl api-resources  | grep ing
+  # 2179  kubectl get ingressclass
+  # 2180  kubectl get ing
+  # 2181  kubectl get ing -n game-2048
+  # 2182  kubectl apply -f deploy.yaml
+  # 2183  kubectl get ing
+  # 2184  kubectl create ing --help 
+  # 2185  kubectl create ingress simple --rule="foo.com/bar=svc1:80 --dry-run=client -o yaml > ing.yaml
+  # 2186  kubectl create ingress simple --rule="foo.com/bar=svc1:80" --dry-run=client -o yaml > ing.yaml
+  # 2187  kubectl expose deploy nginx --port=80 --dry-run=client -o yaml > svc.yaml
+  # 2188  kubectl apply -f deploy.yaml
+  # 2189  kubectl config set-context --current --namespace=game-2048
+  # 2190  kubectl get all
+  # 2191  kubectl get pod
+  # 2192  kubectl describe po nginx-6df4bb547-v57m9  
+  # 2193  kubectl apply -f cm.yaml
+  # 2194  kubectl apply -f deploy.yaml
+  # 2195  kubectl get po
+  # 2196  kubectl get ing
+  # 2197  kubectl edit ing ingress-2048
+  # 2198  kubectl get ing
+  # 2199  kubectl get po
+  # 2200  kubectl exec -it nginx-6df4bb547-v57m9  bash

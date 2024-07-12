@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('git checkout') {
+            steps {
+                git 'https://github.com/Pritam-Khergade/student-ui.git'
+            }
+        }
+        stage('docker stage') {
+            steps {
+
+                sh '''sudo yum install docker -y 
+                sudo systemctl start docker
+                sudo systemctl enable docker 
+                sudo docker build -t demo .'''
+
+            }
+        }
+        stage('docker push') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region us-west-2 | sudo  docker login --username AWS --password-stdin 281852974741.dkr.ecr.us-west-2.amazonaws.com
+               sudo docker tag demo 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_ID
+               sudo docker push 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_ID
+               sudo docker system prune -a -f '''
+            }
+        }
+    }
+}
