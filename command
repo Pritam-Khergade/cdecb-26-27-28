@@ -325,3 +325,5 @@ kubectl create ingress simple --rule="foo.com/bar=svc1:80" --dry-run=client -o y
   # 2198  kubectl get ing
   # 2199  kubectl get po
   # 2200  kubectl exec -it nginx-6df4bb547-v57m9  bash
+
+  docker run -d --privileged -P --user root  -v /mnt:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins
