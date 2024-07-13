@@ -4,26 +4,47 @@ pipeline {
     stages {
         stage('git checkout') {
             steps {
-                git 'https://github.com/Pritam-Khergade/student-ui.git'
+                git branch: "$branch", url: 'https://github.com/Pritam-Khergade/student-ui.git'
             }
         }
+        
         stage('docker stage') {
             steps {
 
-                sh '''sudo yum install docker -y 
-                sudo systemctl start docker
-                sudo systemctl enable docker 
-                sudo docker build -t demo .'''
+                sh ''' apt update && apt install docker.io -y && apt install -y awscli
+                  docker build -t demo .'''
+            }
+        }
+        stage('make aws dir') {
+            steps {
+                sh '''
+                mkdir -p ~/.aws
+                touch ~/.aws/credentials
+                
+                '''
+            }
+        }
+        stage('aws config') {
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aniket-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+       sh ''' cat << EOF >  ~/.aws/credentials
+                [default]
+                aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+                aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+                 '''
+                 sh ''' aws s3 ls  '''
+
+}
 
             }
         }
         stage('docker push') {
             steps {
                 sh '''
-                aws ecr get-login-password --region us-west-2 | sudo  docker login --username AWS --password-stdin 281852974741.dkr.ecr.us-west-2.amazonaws.com
-               sudo docker tag demo 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_ID
-               sudo docker push 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_ID
-               sudo docker system prune -a -f '''
+                aws ecr get-login-password --region us-west-2 |    docker login --username AWS --password-stdin 281852974741.dkr.ecr.us-west-2.amazonaws.com
+                 docker tag demo 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_TIMESTAMP
+                 docker push 281852974741.dkr.ecr.us-west-2.amazonaws.com/student-ui-tomcat:$BUILD_TIMESTAMP
+                 docker system prune -a -f '''
             }
         }
     }
