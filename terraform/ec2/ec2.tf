@@ -1,10 +1,12 @@
 resource "aws_instance" "ec2" {
   # count = 4
-  ami           = "ami-0b72821e2f351e396"
-  instance_type = "t2.micro"
-  key_name      = "DevOps_N.Virginia_Key"
-  subnet_id = aws_subnet.private.id
+  ami           = var.ami
+  instance_type = var.instance_type
+  key_name      = var.keyname
+  subnet_id     = var.subnet_id
+  associate_public_ip_address = var.public_ip
+  vpc_security_group_ids =[var.security_group]
   tags = {
-    Name = "terraform "
+    Name = var.name
   }
 }
