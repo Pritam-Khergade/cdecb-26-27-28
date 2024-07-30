@@ -41,3 +41,15 @@ module "eks" {
   min_size      = 1
   node_group_subnet_id = module.vpc.private_subnet_id
 }
+
+
+module "s3" {
+  source            = "./s3"
+  bucketname        = "aws-asl-bucket-batch-cdec"
+  lifecycle_status  = "Enabled"
+  object_expiration = 90
+  env = "DEV"
+  role = "APP"
+  criticality = "SILVER"
+
+}
