@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "s3" {
   bucket = var.bucketname
-  tags = local.tags
+  tags   = local.tags
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_configuration" {

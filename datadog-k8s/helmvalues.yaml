@@ -1,0 +1,16 @@
+
+# helm repo add datadog https://helm.datadoghq.com
+# helm repo update
+# kubectl create secret generic datadog-secret --from-literal api-key=yourapi-key
+
+
+---
+
+datadog:
+ apiKeyExistingSecret: datadog-secret
+ site: app.datadoghq.com
+
+
+---
+#helm install datadog-agent -f datadog-values.yaml datadog/datadog
+

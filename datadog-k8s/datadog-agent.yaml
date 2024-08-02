@@ -1,0 +1,18 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  global:
+    clusterName: Dr-Doom
+    site: datadoghq.com
+    credentials:
+      apiSecret:
+        secretName: datadog-secret
+        keyName: api-key
+
+---
+# helm repo add datadog https://helm.datadoghq.com
+# helm install datadog-operator datadog/datadog-operator
+# kubectl create secret generic datadog-secret --from-literal api-key=yourapikey
+
